@@ -98,7 +98,7 @@ const getUserVideos = asyncHandler(async (req, res) => {
         owner: req.user._id
     })
 
-    if (!videos) {
+    if (!videos.length) {
         throw new ApiError(404, "No videos found.")
     }
 
@@ -110,4 +110,4 @@ const getUserVideos = asyncHandler(async (req, res) => {
 
 })
 
-export { uploadVideo, deleteVideo }
+export { uploadVideo, deleteVideo, getUserVideos }

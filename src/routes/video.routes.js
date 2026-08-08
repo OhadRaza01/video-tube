@@ -1,7 +1,7 @@
 import { Router } from "express";
 import jwtVerify from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { deleteVideo, uploadVideo } from "../controllers/video.controller.js";
+import { deleteVideo, getUserVideos, uploadVideo } from "../controllers/video.controller.js";
 
 
 const router = Router()
@@ -24,6 +24,11 @@ router.route("/upload-video").post(
 router.route("/delete-video/:videoId").delete(
     jwtVerify,
     deleteVideo
+)
+
+router.route("/my-videos").get(
+    jwtVerify,
+    getUserVideos
 )
 
 export default router;
