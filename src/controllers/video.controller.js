@@ -110,4 +110,20 @@ const getUserVideos = asyncHandler(async (req, res) => {
 
 })
 
+const updateVideo = asyncHandler(async (req, res) => {
+
+})
+
+const getAllVideos = asyncHandler(async (req, res) => {
+
+})
+
+const getVideo = asyncHandler(async (req, res) => {
+
+})
+
+const increamentVideoView = asyncHandler(async (req, res) => {
+
+})
+
 export { uploadVideo, deleteVideo, getUserVideos }
