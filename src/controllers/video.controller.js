@@ -74,16 +74,38 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
     const videoPublicId = video.videoPublicId
     const thumbnailPublicId = video.thumbnailPublicId
-    
-    await deleteFileFromCloudinary(videoPublicId , "video")
-    await deleteFileFromCloudinary(thumbnailPublicId , "image")
-    
+
+    await deleteFileFromCloudinary(videoPublicId, "video")
+    await deleteFileFromCloudinary(thumbnailPublicId, "image")
+
     await video.deleteOne();
 
     return res
         .status(200)
         .json(
             new ApiResponse(200, {}, "Video is deleted successfully")
+        )
+
+})
+
+const getUserVideos = asyncHandler(async (req, res) => {
+
+    //req.user se user fetch krlo
+    //find kro current user ki jo id hai usse videos nikal lo
+    //check lagao and response send krdo
+
+    const videos = await Video.find({ // returns array
+        owner: req.user._id
+    })
+
+    if (!videos) {
+        throw new ApiError(404, "No videos found.")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, videos, "videos fetched successfully")
         )
 
 })
