@@ -110,13 +110,28 @@ const getUserVideos = asyncHandler(async (req, res) => {
 
 })
 
+const getAllVideos = asyncHandler(async (req, res) => {
+
+    const videos = await Video.find({
+        isPublished : true
+    })
+
+    if (!videos.length) {
+        throw new ApiError(404, "No videos found")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, videos, "videos fetched successfully.")
+        )
+
+})
+
 const updateVideo = asyncHandler(async (req, res) => {
 
 })
 
-const getAllVideos = asyncHandler(async (req, res) => {
-
-})
 
 const getVideo = asyncHandler(async (req, res) => {
 
