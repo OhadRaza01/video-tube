@@ -141,4 +141,4 @@ const increamentVideoView = asyncHandler(async (req, res) => {
 
 })
 
-export { uploadVideo, deleteVideo, getUserVideos }
+export { uploadVideo, deleteVideo, getUserVideos, getAllVideos }
