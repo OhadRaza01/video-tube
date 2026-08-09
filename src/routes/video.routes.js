@@ -50,4 +50,8 @@ router.route("/:videoId").get(
     getVideo
 )
 
+router.route("/:videoId/view").post(
+    incrementVideoView
+);
+
 export default router;
