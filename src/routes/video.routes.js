@@ -1,7 +1,7 @@
 import { Router } from "express";
 import jwtVerify from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { deleteVideo, getAllVideos, getUserVideos, getVideo, updateThumbnail, updateVideoDetails, uploadVideo } from "../controllers/video.controller.js";
+import { deleteVideo, getAllVideos, getUserVideos, getVideo, increamentVideoView, updateThumbnail, updateVideoDetails, uploadVideo } from "../controllers/video.controller.js";
 
 
 const router = Router()
@@ -51,7 +51,7 @@ router.route("/:videoId").get(
 )
 
 router.route("/:videoId/view").post(
-    incrementVideoView
+    increamentVideoView
 );
 
 export default router;
