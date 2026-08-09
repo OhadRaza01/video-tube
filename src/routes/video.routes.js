@@ -46,7 +46,7 @@ router.route("/:videoId/thumbnail").patch(
     updateThumbnail
 )
 
-router.route("/:videoId/video").get(
+router.route("/:videoId").get(
     getVideo
 )
 

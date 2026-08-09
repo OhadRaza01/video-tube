@@ -236,7 +236,40 @@ const getVideo = asyncHandler(async (req, res) => {
 })
 
 const increamentVideoView = asyncHandler(async (req, res) => {
+    const { videoId } = req.params;
 
+    if (!mongoose.isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid video ID");
+    }
+
+    const video = await Video.findOneAndUpdate(
+        {
+            _id: videoId,
+            isPublished: true
+        },
+        {
+            $inc: {
+                views: 1
+            }
+        },
+        {
+            returnDocument: "after"
+        }
+    );
+
+    if (!video) {
+        throw new ApiError(404, "Video not found");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                { views: video.views },
+                "Video view incremented successfully"
+            )
+        );
 })
 
-export { uploadVideo, deleteVideo, getUserVideos, getAllVideos, updateVideoDetails, updateThumbnail, getVideo }
+export { uploadVideo, deleteVideo, getUserVideos, getAllVideos, updateVideoDetails, updateThumbnail, getVideo, increamentVideoView }
