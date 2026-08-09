@@ -151,7 +151,7 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
     const video = await Video.findOneAndUpdate({ _id: videoId, owner: req.user?._id }, {
 
         $set: updateFields
-        
+
     }, { returnDocument: "after" })
 
     if (!video) {
@@ -166,6 +166,42 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
 
 })
 
+const updateThumbnail = asyncHandler(async (req, res) => {
+
+    const thumbnailLocalPath = req.file?.path
+
+    const { videoId } = req.params
+
+    if (!thumbnailLocalPath) {
+        throw new ApiError(400, "Thumbnail is required.")
+    }
+
+    const thumbnail = await uploadOnCloudinary(thumbnailLocalPath)
+
+    if (!thumbnail) {
+        throw new ApiError(500, "Error during uploading file to cloudinary.")
+    }
+
+    const video = await Video.findOne({ _id: videoId, owner: req.user?._id })
+
+    if (!video) {
+        throw new ApiError(404, "Video not found or you are not authorized");
+    }
+
+    video.thumbnail = thumbnail.secure_url
+    video.thumbnailPublicId = thumbnail.public_id
+
+    await video.save()
+
+    await deleteFileFromCloudinary()
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, video, "thumbnail is updated succesfully")
+        )
+
+})
 
 const getVideo = asyncHandler(async (req, res) => {
 
