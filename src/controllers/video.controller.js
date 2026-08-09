@@ -113,7 +113,7 @@ const getUserVideos = asyncHandler(async (req, res) => {
 const getAllVideos = asyncHandler(async (req, res) => {
 
     const videos = await Video.find({
-        isPublished : true
+        isPublished: true
     })
 
     if (!videos.length) {
@@ -128,7 +128,33 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 })
 
-const updateVideo = asyncHandler(async (req, res) => {
+const updateVideoDetails = asyncHandler(async (req, res) => {
+
+    const { description, title } = req.body
+
+    const { videoId } = req.params
+
+    if (!description || !title) {
+        throw new ApiError(400, "All fields are required.")
+    }
+
+    const video = await Video.findOneAndUpdate({ _id: videoId, owner: req.user?._id }, {
+
+        $set: {
+            title: title,
+            description: description
+        }
+    }, { returnDocument: "after" })
+
+    if (!video) {
+        throw new ApiError(404, "Video not found or you are not authorized");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, video, "video details are updated successfully.")
+        )
 
 })
 
