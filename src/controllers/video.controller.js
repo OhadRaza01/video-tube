@@ -134,16 +134,24 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
 
     const { videoId } = req.params
 
-    if (!description || !title) {
-        throw new ApiError(400, "All fields are required.")
+    if (!description && !title) {
+        throw new ApiError(400, "title or description is required.")
+    }
+
+    const updateFields = {};
+
+    if (title) {
+        updateFields.title = title;
+    }
+
+    if (description) {
+        updateFields.description = description;
     }
 
     const video = await Video.findOneAndUpdate({ _id: videoId, owner: req.user?._id }, {
 
-        $set: {
-            title: title,
-            description: description
-        }
+        $set: updateFields
+        
     }, { returnDocument: "after" })
 
     if (!video) {
