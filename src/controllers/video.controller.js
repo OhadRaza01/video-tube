@@ -188,12 +188,14 @@ const updateThumbnail = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Video not found or you are not authorized");
     }
 
+    const oldThumbnailPublicId = video.thumbnailPublicId
+
     video.thumbnail = thumbnail.secure_url
     video.thumbnailPublicId = thumbnail.public_id
 
     await video.save()
 
-    await deleteFileFromCloudinary()
+    await deleteFileFromCloudinary(oldThumbnailPublicId)
 
     return res
         .status(200)
