@@ -207,10 +207,28 @@ const updateThumbnail = asyncHandler(async (req, res) => {
 
 const getVideo = asyncHandler(async (req, res) => {
 
+    const { videoId } = req.params
+
+    const video = await Video.findById(videoId)
+
+    if (!video) {
+        throw new ApiError(404, "Video not found.")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                video,
+                "video fectched successfully."
+            )
+        )
+
 })
 
 const increamentVideoView = asyncHandler(async (req, res) => {
 
 })
 
-export { uploadVideo, deleteVideo, getUserVideos, getAllVideos, updateVideoDetails, updateThumbnail }
+export { uploadVideo, deleteVideo, getUserVideos, getAllVideos, updateVideoDetails, updateThumbnail, getVideo}
