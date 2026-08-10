@@ -206,7 +206,7 @@ const updateThumbnail = asyncHandler(async (req, res) => {
 
 })
 
-const getVideo = asyncHandler(async (req, res) => {
+const getVideoById = asyncHandler(async (req, res) => {
 
     const { videoId } = req.params
 
@@ -272,4 +272,4 @@ const increamentVideoView = asyncHandler(async (req, res) => {
         );
 })
 
-export { uploadVideo, deleteVideo, getUserVideos, getAllVideos, updateVideoDetails, updateThumbnail, getVideo, increamentVideoView }
+export { uploadVideo, deleteVideo, getUserVideos, getAllVideos, updateVideoDetails, updateThumbnail, getVideoById, increamentVideoView }
