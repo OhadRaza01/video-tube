@@ -96,7 +96,8 @@ const getUserVideos = asyncHandler(async (req, res) => {
     //check lagao and response send krdo
 
     const videos = await Video.find({ // returns array
-        owner: req.user._id
+        owner: req.user._id,
+        isPublished: true
     })
 
     if (!videos.length) {

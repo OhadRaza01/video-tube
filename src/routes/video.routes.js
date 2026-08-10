@@ -1,7 +1,7 @@
 import { Router } from "express";
 import jwtVerify from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { deleteVideo, getAllVideos, getUserVideos, getVideo, getVideoById, increamentVideoView, updateThumbnail, updateVideoDetails, uploadVideo } from "../controllers/video.controller.js";
+import { deleteVideo, getAllVideos, getUserVideos, getVideoById, increamentVideoView, updateThumbnail, updateVideoDetails, uploadVideo, togglePublishStatus } from "../controllers/video.controller.js";
 
 
 const router = Router()
@@ -54,6 +54,6 @@ router.route("/:videoId/view").post(
     increamentVideoView
 );
 
-router.route("/toggle/publish/:videoId").patch(togglePublishStatus);
+router.route("/toggle/publish/:videoId").patch(jwtVerify, togglePublishStatus);
 
 export default router;
