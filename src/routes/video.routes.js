@@ -54,4 +54,6 @@ router.route("/:videoId/view").post(
     increamentVideoView
 );
 
+router.route("/toggle/publish/:videoId").patch(togglePublishStatus);
+
 export default router;
