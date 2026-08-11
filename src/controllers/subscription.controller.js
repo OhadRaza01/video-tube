@@ -64,22 +64,18 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     }
 
     const totalSubscribers = await Subscription.countDocuments({
-        channel : channelId
+        channel: channelId
     })
 
-    if(!totalSubscribers){
-        throw new ApiError(404 , "Channel not found.")
-    }
-
     return res
-    .status(200)
-    .json(
-        new ApiResponse (
-            200,
-            totalSubscribers,
-            "subscribers fectched successfully."
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                totalSubscribers,
+                "subscribers fectched successfully."
+            )
         )
-    )
 })
 
 export { toggleSubscription }
