@@ -56,4 +56,30 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 
 })
 
-export { toggleSubscription}
+const getUserChannelSubscribers = asyncHandler(async (req, res) => {
+    const { channelId } = req.params
+
+    if (!mongoose.isValidObjectId(channelId)) {
+        throw new ApiError(400, "Channel id is invalid.")
+    }
+
+    const totalSubscribers = await Subscription.countDocuments({
+        channel : channelId
+    })
+
+    if(!totalSubscribers){
+        throw new ApiError(404 , "Channel not found.")
+    }
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse (
+            200,
+            totalSubscribers,
+            "subscribers fectched successfully."
+        )
+    )
+})
+
+export { toggleSubscription }
