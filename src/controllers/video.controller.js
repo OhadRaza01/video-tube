@@ -114,20 +114,34 @@ const getUserVideos = asyncHandler(async (req, res) => {
 
 const getAllVideos = asyncHandler(async (req, res) => {
 
+    const { page = 1,
+        limit = 10,
+        query,
+        sortBy,
+        sortType,
+        userId
+    } = req.query
+
+    const pageNumber = Number(page)
+    const limitNumber = Number(limit)
+
+    const skip = (pageNumber - 1) * limitNumber
+
     const videos = await Video.find({
         isPublished: true
     })
+        .skip(skip)
+        .limit(limitNumber);
 
-    if (!videos.length) {
-        throw new ApiError(404, "No videos found")
+    if(!videos){
+        throw new ApiError(400 , "Videos not found.")
     }
 
     return res
-        .status(200)
-        .json(
-            new ApiResponse(200, videos, "videos fetched successfully.")
-        )
-
+    .status(200)
+    .json(
+        new ApiResponse(200 , videos , "Videos fetched successfully.")
+    )
 })
 
 const updateVideoDetails = asyncHandler(async (req, res) => {
