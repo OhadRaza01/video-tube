@@ -133,7 +133,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
         .skip(skip)
         .limit(limitNumber);
 
-    if(!videos){
+    if(!videos.length){
         throw new ApiError(400 , "Videos not found.")
     }
 
