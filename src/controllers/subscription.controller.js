@@ -55,3 +55,5 @@ const toggleSubscription = asyncHandler(async (req, res) => {
         )
 
 })
+
+export { toggleSubscription}
