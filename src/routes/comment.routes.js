@@ -1,5 +1,5 @@
 import jwtVerify from '../middlewares/auth.middleware.js';
-import { addComment } from '../controllers/comment.controller.js';
+import { addComment, deleteComment } from '../controllers/comment.controller.js';
 
 import { Router } from 'express';
 
@@ -9,5 +9,7 @@ router.use(jwtVerify); // Apply verifyJWT middleware to all routes in this file
 
 router.route("/:videoId").post(addComment);
 // router.route("/c/:commentId").delete(deleteComment).patch(updateComment);
+
+router.route("/c/:commentId").delete(deleteComment)
 
 export default router
