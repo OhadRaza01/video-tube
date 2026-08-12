@@ -43,7 +43,45 @@ const addComment = asyncHandler(async (req, res) => {
 });
 
 const updateComment = asyncHandler(async (req, res) => {
-    // TODO: update a comment
+
+    const { commentId } = req.params
+    const { content } = req.body
+
+    if (!mongoose.isValidObjectId(commentId)) {
+        throw new ApiError(400, "Invalid comment id.");
+    }
+
+    if (!content?.trim()) {
+        throw new ApiError(400, "Please enter some content.");
+    }
+
+    const comment = await Comment.findOneAndUpdate(
+        {
+            _id: commentId,
+            owner: req.user._id
+        },
+        {
+            $set: {
+                content: content.trim()
+            }
+        },
+        { returnDocument: "after" }
+    )
+
+    if (!comment) {
+        throw new ApiError(404, "Comment not found or you are not authorized.")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                comment,
+                "comment is updated successfully."
+            )
+        )
+
 })
 
 const deleteComment = asyncHandler(async (req, res) => {
@@ -51,7 +89,7 @@ const deleteComment = asyncHandler(async (req, res) => {
     const { commentId } = req.params
 
     if (!mongoose.isValidObjectId(commentId)) {
-        throw new ApiError(400, "Invalid video id.");
+        throw new ApiError(400, "Invalid comment id.");
     }
 
     const comment = await Comment.findOneAndDelete({
