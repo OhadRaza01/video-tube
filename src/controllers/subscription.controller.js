@@ -63,19 +63,52 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Channel id is invalid.")
     }
 
-    const totalSubscribers = await Subscription.countDocuments({
-        channel: channelId
-    })
+    const subscribers = await Subscription.aggregate([
+        {
+            $match: {
+                channel: new mongoose.Types.ObjectId(channelId)
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "subscriber",
+                foreignField: "_id",
+                as: "subscribers",
+                pipeline: [
+                    {
+                        $project: {
+                            username: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                subscriber: {
+                    $first: "$subscribers"
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                subscriber: 1
+            }
+        }
+    ])
 
     return res
         .status(200)
         .json(
             new ApiResponse(
                 200,
-                totalSubscribers,
+                subscribers,
                 "subscribers fectched successfully."
             )
         )
 })
 
-export { toggleSubscription , getUserChannelSubscribers }
+export { toggleSubscription, getUserChannelSubscribers }
