@@ -113,4 +113,54 @@ const deleteComment = asyncHandler(async (req, res) => {
 
 })
 
-export { addComment, updateComment, deleteComment }
+const getVideoComments = asyncHandler(async (req, res) => {
+   
+    const { videoId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+
+    if (!mongoose.isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid video id.");
+    }
+
+    const pageNumber = Math.max(Number(page) || 1, 1);
+
+    const limitNumber = Math.min(
+        Math.max(Number(limit) || 10, 1),
+        50
+    );
+
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const totalComments = await Comment.countDocuments({
+        video: videoId
+    });
+
+    const totalPages = Math.ceil(totalComments / limitNumber);
+
+    const comments = await Comment.find({
+        video: videoId
+    })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNumber);
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                {
+                    comments,
+                    pagination: {
+                        page: pageNumber,
+                        limit: limitNumber,
+                        totalComments,
+                        totalPages
+                    }
+                },
+                "Comments fetched successfully."
+            )
+        );
+});
+
+export { addComment, updateComment, deleteComment, getVideoComments }
