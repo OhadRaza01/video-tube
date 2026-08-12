@@ -8,19 +8,15 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
     const { name, description } = req.body
 
-    if (!name || !description) {
+    if (!name.trim() || !description.trim()) {
         throw new ApiError(400, "All fields are required.")
     }
 
     const playlist = await Playlist.create({
-        name,
-        description,
+        name: name.trim(),
+        description: description.trim(),
         owner: req.user._id
     })
-
-    if (!playlist) {
-        throw new ApiError(500, "Something went wrong while creating playlist.")
-    }
 
     return res
         .status(201)
@@ -35,4 +31,4 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
 })
 
-export {createPlaylist}
+export { createPlaylist }
