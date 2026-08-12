@@ -202,7 +202,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
     )
 
     if (!playlist) {
-        throw new ApiError(404, "playlist not found.")
+        throw new ApiError(404, "Playlist not found or you are not authorized.")
     }
 
     return res
@@ -251,7 +251,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
     )
 
     if (!playlist) {
-        throw new ApiError(400, "playlist not found.")
+        throw new ApiError(400, "Playlist not found or you are not authorized.")
     }
 
     return res
@@ -265,4 +265,34 @@ const updatePlaylist = asyncHandler(async (req, res) => {
         )
 })
 
-export { createPlaylist, getUserPlaylists, getPlaylistById, addVideoToPlaylist, removeVideoFromPlaylist, updatePlaylist }
+const deletePlaylist = asyncHandler(async (req, res) => {
+    const { playlistId } = req.params;
+
+    if (!mongoose.isValidObjectId(playlistId)) {
+        throw new ApiError(400, "Invalid playlist id.");
+    }
+
+    const playlist = await Playlist.findOneAndDelete({
+        _id: playlistId,
+        owner: req.user._id
+    });
+
+    if (!playlist) {
+        throw new ApiError(
+            404,
+            "Playlist not found or you are not authorized."
+        );
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                {},
+                "Playlist deleted successfully."
+            )
+        );
+});
+
+export { createPlaylist, getUserPlaylists, getPlaylistById, addVideoToPlaylist, removeVideoFromPlaylist, updatePlaylist , deletePlaylist }
