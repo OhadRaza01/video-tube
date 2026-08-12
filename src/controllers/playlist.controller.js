@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { Playlist } from "../models/playlist.model.js";
@@ -217,4 +217,52 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 
 })
 
-export { createPlaylist, getUserPlaylists, getPlaylistById, addVideoToPlaylist, removeVideoFromPlaylist }
+const updatePlaylist = asyncHandler(async (req, res) => {
+
+    const { playlistId } = req.params
+    const { name, description } = req.body
+
+    if (!mongoose.isValidObjectId(playlistId)) {
+        throw new ApiError(400, "playlist id is invalid.")
+    }
+
+    if ((!name || !name.trim()) && (!description || !description.trim())) {
+        throw new ApiError(400, "Please enter a title or description.");
+    }
+
+    const changes = {}
+
+    if (name?.trim()) {
+        changes.name = name.trim()
+    }
+    if (description?.trim()) {
+        changes.description = description.trim()
+    }
+
+    const playlist = await Playlist.findOneAndUpdate(
+        {
+            _id: playlistId,
+            owner: req.user._id
+        },
+        {
+            $set: changes
+        },
+        { returnDocument: "after" }
+    )
+
+    if (!playlist) {
+        throw new ApiError(400, "playlist not found.")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                playlist,
+                "playlist is updated successfully."
+            )
+        )
+})
+
+export { createPlaylist, getUserPlaylists, getPlaylistById, addVideoToPlaylist, removeVideoFromPlaylist, updatePlaylist }
