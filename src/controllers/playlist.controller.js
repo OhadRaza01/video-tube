@@ -142,4 +142,42 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 
 //play list me video add krne kai baad getPlaylistById ki testing krni hai
 
-export { createPlaylist, getUserPlaylists, getPlaylistById }
+const addVideoToPlaylist = asyncHandler(async (req, res) => {
+
+    const { playlistId, videoId } = req.params
+
+    if (!mongoose.isValidObjectId(playlistId) || !mongoose.isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid playlist or video id.")
+    }
+
+    const playlist = await Playlist.findOneAndUpdate(
+        {
+            _id: playlistId,
+            owner: req.user._id
+        },
+        {
+            $addToSet: {
+                videos: videoId
+            }
+        },
+        { returnDocument: "after" }
+    )
+
+    if(!playlist){
+        throw new ApiError(404 , "playlist not found.")
+    }
+
+    return res 
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            playlist,
+            "video is added successfully."
+        )
+    )
+
+
+})
+
+export { createPlaylist, getUserPlaylists, getPlaylistById , addVideoToPlaylist }
