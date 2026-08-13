@@ -104,9 +104,74 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
         )
 })
 
-
 const getLikedVideos = asyncHandler(async (req, res) => {
-    //TODO: get all liked videos
+
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNumber = Math.max(Number(page) || 1, 1);
+    const limitNumber = Math.min(
+        Math.max(Number(limit) || 10, 1),
+        50
+    );
+
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const likedVideos = await Like.aggregate([
+        {
+            $match: {
+                likedBy: new mongoose.Types.ObjectId(req.user._id)
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }
+        },
+        {
+            $skip: skip
+        },
+        {
+            $limit: limitNumber
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "video",
+                foreignField: "_id",
+                as: "video",
+                pipeline: [
+                    {
+                        $project: {
+                            _id: 1,
+                            title: 1,
+                            thumbnail: 1,
+                            views: 1,
+                            duration: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $unwind: "$video"
+        },
+        {
+            $replaceRoot: {
+                newRoot: "$video"
+            }
+        }
+    ])
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                likedVideos,
+                "liked videos fetched successfully."
+            )
+        )
+
 })
 
 
