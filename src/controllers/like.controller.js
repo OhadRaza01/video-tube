@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js"
 import mongoose from "mongoose"
 import { Video } from "../models/video.model.js"
 import { Like } from "../models/like.model.js"
+import { Comment } from "../models/comment.model.js"
 
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
