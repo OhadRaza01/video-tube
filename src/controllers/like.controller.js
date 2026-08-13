@@ -58,8 +58,50 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 
 const toggleCommentLike = asyncHandler(async (req, res) => {
     const { commentId } = req.params
-    //TODO: toggle like on comment
 
+    if (!mongoose.isValidObjectId(commentId)) {
+        throw new ApiError(400, "Invalid comment id.");
+    }
+
+    const commentExists = await Comment.exists({
+        _id: commentId
+    })
+
+    if (!commentExists) {
+        throw new ApiError(404, "Comment not found.")
+    }
+
+    const existinglike = await Like.findOneAndDelete({
+        comment: commentId,
+        likedBy: req.user._id
+    })
+
+    if (existinglike) {
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    {},
+                    "Comment is unliked successfully."
+                )
+            );
+    }
+
+    const like = await Like.create({
+        comment: commentId,
+        likedBy: req.user._id
+    })
+
+    return res
+        .status(201)
+        .json(
+            new ApiResponse(
+                201,
+                like,
+                "Comment liked successfully."
+            )
+        )
 })
 
 
